@@ -67,27 +67,16 @@ function getLast7Days() {
 }
 
 async function calcCaloriesAI(description) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/calculate", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1000,
-      system: `You are a nutrition expert. When given a meal description, return ONLY a JSON object (no markdown, no backticks) with this shape:
-{
-  "items": [{ "name": "item name", "amount": "quantity", "calories": number }],
-  "total": number,
-  "protein": number,
-  "carbs": number,
-  "fat": number
-}
-Be precise and realistic with calorie estimates.`,
-      messages: [{ role: "user", content: `Calculate calories for: ${description}` }]
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ description }),
   });
-  const data = await response.json();
-  const text = data.content.filter(b => b.type === "text").map(b => b.text).join("");
-  return JSON.parse(text.replace(/```json|```/g, "").trim());
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || "API call failed");
+  }
+  return await response.json();
 }
 
 export default function WellnessTracker() {
