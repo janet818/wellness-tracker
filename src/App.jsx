@@ -71,7 +71,7 @@ async function calcCaloriesAI(description) {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5",
       max_tokens: 1000,
       system: `You are a nutrition expert. When given a meal description, return ONLY a JSON object (no markdown, no backticks) with this shape:
 {
